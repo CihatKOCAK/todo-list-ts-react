@@ -1,6 +1,7 @@
 import React, { FC, ChangeEvent, useState } from "react";
 import "./App.css";
 import { ITask } from "./Interfaces";
+import TodoTask from "./Components/TodoTask";
 
 //fc for functional component
 const App: FC = () => {
@@ -16,7 +17,14 @@ const App: FC = () => {
   const addTask = (): void => {
     const newTask = { taskName: task, deadline: deadline };
     setTodoList([...todoList, newTask]);
+    setTask("");
+    setDeadline(0);
   };
+
+  const complateTask = (taskNameToDelete: string): void => {
+    setTodoList(todoList.filter((task) => task.taskName !== taskNameToDelete));
+  };
+
   return (
     <div className="App">
       <div className="header">
@@ -25,18 +33,53 @@ const App: FC = () => {
             type="text"
             name="task"
             placeholder="Task..."
+            value={task}
             onChange={handleChange}
           />
           <input
             type="number"
             name="deadline"
             placeholder="Deadline (in Days)..."
+            value={deadline}
             onChange={handleChange}
           />
         </div>
-        <button>Add Task</button>
+        <button onClick={addTask}>Add Task</button>
       </div>
-      <div className="todoList"></div>
+      <div className="todoList">
+        <div className="task">
+          <div className="content">
+            {todoList.length !== 0 ? (
+              <>
+                <span>Task Name</span>
+                <span
+                  style={{
+                    borderTopRightRadius: "8px",
+                    borderBottomRightRadius: "8px",
+                  }}
+                >
+                  Deadline (in Days)...
+                </span>
+              </>
+            ) : (
+              <span
+                style={{
+                  borderTopRightRadius: "8px",
+                  borderBottomRightRadius: "8px",
+                  cursor: "default",
+                }}
+              >
+                No Tasks
+              </span>
+            )}
+          </div>
+        </div>
+        {todoList.map((task: ITask, index: number) => {
+          return (
+            <TodoTask key={index} task={task} complateTask={complateTask} />
+          );
+        })}
+      </div>
     </div>
   );
 };
